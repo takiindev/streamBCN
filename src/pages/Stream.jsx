@@ -29,6 +29,7 @@ function Stream() {
   // removed manual userId/username fields — we now require studentID + birthDate auth
   const [studentIdInput, setStudentIdInput] = useState('');
   const [birthDateInput, setBirthDateInput] = useState('');
+  const [showVideoInfo, setShowVideoInfo] = useState(true);
 
   const messagesEndRef = useRef(null);
   const typingTimer = useRef(null);
@@ -477,28 +478,77 @@ function Stream() {
         <div className="flex-1 flex flex-col rounded-[5px] overflow-hidden shadow-lg">
           {/* Video Player */}
           <div className="flex-1 bg-black relative overflow-hidden shadow-2xl h-80 lg:h-auto">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/10 z-10 pointer-events-none"></div>
-            <iframe
-              className="w-full aspect-[951/535] object-cover" 
-              src="https://www.youtube-nocookie.com/embed/4xDzrJKXOOY?autoplay=1&mute=1" 
-              title="YouTube video player" 
-              frameBorder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-              referrerPolicy="strict-origin-when-cross-origin" 
-              allowFullScreen 
-            />
-          </div>
+            {/* Inner container */}
+            <div className="relative w-full h-full bg-black rounded-[5px] overflow-hidden">
+              {/* Animated Border */}
+              <div className="absolute inset-0 z-20 pointer-events-none">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 animate-[shimmer_3s_ease-in-out_infinite]"></div>
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-pink-500 to-blue-500 animate-[shimmer_3s_ease-in-out_infinite_reverse]"></div>
+                <div className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-blue-500 via-purple-500 to-red-500 animate-[shimmer-vertical_3s_ease-in-out_infinite]"></div>
+                <div className="absolute top-0 right-0 h-full w-1 bg-gradient-to-b from-red-500 via-pink-500 to-blue-500 animate-[shimmer-vertical_3s_ease-in-out_infinite_reverse]"></div>
+              </div>
 
-          {/* Video Info */}
-          <div className="p-4 lg:p-6 bg-gradient-to-r from-slate-800 via-gray-800 to-slate-700 border-t border-gray-600 shadow-xl relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-            <div className="relative max-w-4xl mx-auto">
-              <h1 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-red-400 via-pink-500 to-rose-400 bg-clip-text text-transparent mb-3 tracking-wide">
-                🔴 LiveStream Chat Demo
-              </h1>
-              <p className="text-sm lg:text-base text-gray-300 leading-relaxed font-medium">
-                Trải nghiệm chat realtime với WebSocket và messaging tức thời
-              </p>
+              {/* Floating Icons */}
+              <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
+                {/* Top Left Icons */}
+                <div className="absolute top-4 left-4 text-2xl animate-bounce">🎥</div>
+                <div className="absolute top-8 left-16 text-lg animate-pulse text-blue-400">✨</div>
+                
+                {/* Top Right Icons */}
+                <div className="absolute top-4 right-4 text-2xl animate-bounce delay-1000">🔴</div>
+                <div className="absolute top-8 right-16 text-lg animate-pulse text-red-400 delay-500">⭐</div>
+                
+                {/* Bottom Left Icons */}
+                <div className="absolute bottom-4 left-4 text-xl animate-pulse text-purple-400">🎬</div>
+                <div className="absolute bottom-8 left-16 text-lg animate-bounce delay-700">💫</div>
+                
+                {/* Bottom Right Icons */}
+                <div className="absolute bottom-4 right-4 text-xl animate-pulse text-pink-400 delay-300">🎭</div>
+                <div className="absolute bottom-8 right-16 text-lg animate-bounce delay-1500">🌟</div>
+                
+                {/* Center floating icons */}
+                <div className="absolute top-1/4 left-1/4 text-sm animate-float text-yellow-400 opacity-60">💎</div>
+                <div className="absolute top-3/4 right-1/4 text-sm animate-float-reverse text-cyan-400 opacity-60 delay-1000">🎪</div>
+                <div className="absolute top-1/2 left-1/6 text-sm animate-float text-green-400 opacity-60 delay-500">🎨</div>
+                <div className="absolute top-1/3 right-1/6 text-sm animate-float-reverse text-orange-400 opacity-60 delay-1500">🎊</div>
+              </div>
+              
+              {/* Corner Decorations */}
+              <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-blue-500 z-20 animate-pulse"></div>
+              <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-purple-500 z-20 animate-pulse delay-500"></div>
+              <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-pink-500 z-20 animate-pulse delay-1000"></div>
+              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-red-500 z-20 animate-pulse delay-1500"></div>
+
+              <iframe
+                className="w-full aspect-[951/535] object-cover relative z-0" 
+                src="https://www.youtube-nocookie.com/embed/4xDzrJKXOOY?autoplay=1&mute=1" 
+                title="YouTube video player" 
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerPolicy="strict-origin-when-cross-origin" 
+                allowFullScreen 
+              />
+
+              {/* Toggle Button for Video Info */}
+              <button
+                onClick={() => setShowVideoInfo(!showVideoInfo)}
+                className="absolute top-2 right-0 z-30 bg-black/30 hover:bg-black/50 backdrop-blur-sm rounded-full p-2 border border-gray-600/30 transition-all duration-300 hover:scale-110 text-white cursor-pointer"
+                title={showVideoInfo ? "Ẩn thông tin" : "Hiện thông tin"}
+              >
+                {showVideoInfo ? "👁️" : "🔍"}
+              </button>
+
+              {/* Video Info - Floating in top left */}
+              {showVideoInfo && (
+                <div className="absolute top-4 left-4 z-30 bg-black/80 backdrop-blur-sm rounded-lg px-3 py-2 border border-gray-600/50 max-w-xs transition-all duration-300 animate-in fade-in slide-in-from-left-2">
+                  <h1 className="text-sm font-bold bg-gradient-to-r from-red-400 to-pink-500 bg-clip-text text-transparent mb-1 tracking-wide">
+                    🔴 LiveStream Demo
+                  </h1>
+                  <p className="text-xs text-gray-300 leading-relaxed">
+                    Chat realtime với WebSocket
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
