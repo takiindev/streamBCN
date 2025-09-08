@@ -14,6 +14,7 @@ function Stream() {
   const [currentRoom, setCurrentRoom] = useState('test-room-001');
   const [currentUser, setCurrentUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authenticatedUser, setAuthenticatedUser] = useState(null);
 
   // Chat states
   const [messages, setMessages] = useState([]);
@@ -34,6 +35,7 @@ function Stream() {
   const pingInterval = useRef(null);
   const reconnectTimer = useRef(null);
   const connectionToastTimer = useRef(null);
+  const currentUserRef = useRef(null);
 
   useEffect(() => {
   // no default user — user must authenticate with studentID/password
@@ -152,11 +154,28 @@ function Stream() {
         setViewerCount(data.viewerCount);
       });
 
-      newSocket.on('userTyping', (data) => {
-        const otherTyping = currentUser && ((data.userId && data.userId !== currentUser.userId) || (data.studentId && data.studentId !== currentUser.studentId));
+      newSocket.on('typing', (data) => {
+        console.log('Typing event received:', data);
+        console.log('Current user:', currentUserRef.current);
+        
+        const otherTyping = currentUserRef.current && data.userId !== currentUserRef.current.userId;
+        
         if (data.isTyping && otherTyping) {
-          setTypingUsers(`${data.username || data.fullName} đang nhập...`);
-        } else {
+          setTypingUsers('Có người đang soạn tin nhắn...');
+        } else if (!data.isTyping || data.userId === currentUserRef.current?.userId) {
+          setTypingUsers('');
+        }
+      });
+
+      newSocket.on('userTyping', (data) => {
+        console.log('UserTyping event received:', data);
+        console.log('Current user:', currentUserRef.current);
+        
+        const otherTyping = currentUserRef.current && ((data.userId && data.userId !== currentUserRef.current.userId) || (data.studentId && data.studentId !== currentUserRef.current.studentId));
+        
+        if (data.isTyping && otherTyping) {
+          setTypingUsers('Có người đang soạn tin nhắn...');
+        } else if (!data.isTyping) {
           setTypingUsers('');
         }
       });
@@ -204,7 +223,7 @@ function Stream() {
       return;
     }
 
-    if (!isAuthenticated || !currentUser) {
+    if (!isAuthenticated || !authenticatedUser) {
       alert('Vui lòng đăng nhập trước khi tham gia phòng');
       return;
     }
@@ -220,14 +239,27 @@ function Stream() {
       return;
     }
 
+    // Create currentUser object when joining room
+    const userObj = {
+      userId: 'user_' + Math.random().toString(36).substr(2, 9),
+      username: authenticatedUser.fullName,
+      studentId: authenticatedUser.studentId,
+      fullName: authenticatedUser.fullName
+    };
+
+    // Set currentUser before emitting joinRoom
+    setCurrentUser(userObj);
+    currentUserRef.current = userObj;
+
     // Format data exactly like the working web version
     const joinData = {
       roomId: currentRoom.trim(),
-      userId: 'user_' + Math.random().toString(36).substr(2, 9),
-      username: currentUser.fullName
+      userId: userObj.userId,
+      username: userObj.username
     };
 
     console.log('Emitting joinRoom with data:', joinData);
+    console.log('Setting currentUser to:', userObj);
     socket.emit('joinRoom', joinData);
   };
 
@@ -252,7 +284,7 @@ function Stream() {
         const userObj = res.data.user;
         const token = res.data.access_token || res.data.token;
         const newUser = { ...userObj, access_token: token };
-        setCurrentUser(newUser);
+        setAuthenticatedUser(newUser);
         setIsAuthenticated(true);
         // ensure socket is connecting so user can join when ready
         if (!socket) connectSocket();
@@ -291,7 +323,16 @@ function Stream() {
     });
 
     setMessageInput('');
-    stopTyping();
+    
+    // Stop typing indicator when sending message
+    if (socket && currentRoom && currentUser) {
+      socket.emit('typing', { 
+        roomId: currentRoom, 
+        userId: currentUser.userId,
+        username: currentUser.username,
+        isTyping: false 
+      });
+    }
   };
 
   const addSystemMessage = (text) => {
@@ -306,11 +347,12 @@ function Stream() {
   };
 
   const startTyping = () => {
-    if (!socket || !currentRoom || !currentUser) return;
+    if (!socket || !currentRoom || !currentUser || !isJoined) return;
 
     socket.emit('typing', {
       roomId: currentRoom,
-      user: currentUser,
+      userId: currentUser.userId,
+      username: currentUser.username,
       isTyping: true
     });
   };
@@ -320,7 +362,8 @@ function Stream() {
 
     socket.emit('typing', {
       roomId: currentRoom,
-      user: currentUser,
+      userId: currentUser.userId,
+      username: currentUser.username,
       isTyping: false
     });
   };
@@ -343,12 +386,48 @@ function Stream() {
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
+      // Stop typing indicator when sending message
+      if (socket && currentRoom && currentUser && isJoined) {
+        socket.emit('typing', { 
+          roomId: currentRoom, 
+          userId: currentUser.userId,
+          username: currentUser.username,
+          isTyping: false 
+        });
+      }
       sendMessage();
-    } else {
-      startTyping();
+    }
+  };
 
+  // Separate function for handling input changes (typing indicator)
+  const handleInputChange = (e) => {
+    setMessageInput(e.target.value);
+    
+    // Start typing indicator
+    if (socket && currentRoom && currentUser && isJoined) {
+      console.log('Emitting typing event: isTyping = true');
+      socket.emit('typing', { 
+        roomId: currentRoom, 
+        userId: currentUser.userId,
+        username: currentUser.username,
+        isTyping: true 
+      });
+
+      // Clear existing typing timer
       clearTimeout(typingTimer.current);
-      typingTimer.current = setTimeout(stopTyping, 1000);
+      
+      // Set timer to stop typing after 2 seconds (like HTML version)
+      typingTimer.current = setTimeout(() => {
+        if (socket && currentRoom && currentUser) {
+          console.log('Timeout: Emitting typing event: isTyping = false');
+          socket.emit('typing', { 
+            roomId: currentRoom, 
+            userId: currentUser.userId,
+            username: currentUser.username,
+            isTyping: false 
+          });
+        }
+      }, 2000);
     }
   };
 
@@ -492,7 +571,7 @@ function Stream() {
                       </button>
                     </div>
 
-                    <div className="mt-3 text-sm text-gray-300">Đăng nhập dưới tên: <span className="text-white font-semibold">{currentUser?.fullName || currentUser?.username}</span></div>
+                    <div className="mt-3 text-sm text-gray-300">Đăng nhập dưới tên: <span className="text-white font-semibold">{authenticatedUser?.fullName || authenticatedUser?.username}</span></div>
                   </>
                 )}
               </div>
@@ -558,7 +637,7 @@ function Stream() {
                       <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
                       <div className="w-1.5 h-1.5 bg-pink-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                     </div>
-                    <span className="text-gray-300">{typingUsers}</span>
+                    <span className="text-gray-300 animate-pulse">{typingUsers}</span>
                   </div>
                 </div>
               )}
@@ -569,7 +648,7 @@ function Stream() {
                   <input
                     type="text"
                     value={messageInput}
-                    onChange={(e) => setMessageInput(e.target.value)}
+                    onChange={handleInputChange}
                     onKeyPress={handleKeyPress}
                     placeholder="Nhập tin nhắn..."
                     maxLength={500}
