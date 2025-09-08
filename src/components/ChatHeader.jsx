@@ -2,7 +2,7 @@ import React from 'react';
 
 const ChatHeader = ({ viewerCount, messageCount, ping }) => {
   return (
-    <div className="p-4 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 text-white shadow-xl relative overflow-hidden">
+    <div className="p-4 bg-gradient-to-r from-red-600 via-blue-600 to-purple-700 text-white shadow-xl relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12"></div>
       <div className="relative">
         <h3 className="font-bold text-base lg:text-lg flex items-center gap-2 mb-2 tracking-wide">

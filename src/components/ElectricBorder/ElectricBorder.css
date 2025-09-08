@@ -1,0 +1,101 @@
+.electric-border {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.eb-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.eb-layers {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.eb-stroke {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: var(--eb-border-width, 2px) solid var(--electric-border-color, #5227FF);
+  border-radius: inherit;
+  box-sizing: border-box;
+}
+
+.eb-glow-1 {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 1px solid var(--electric-border-color, #5227FF);
+  border-radius: inherit;
+  opacity: 0.6;
+  filter: blur(1px);
+  box-sizing: border-box;
+}
+
+.eb-glow-2 {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 1px solid var(--electric-border-color, #5227FF);
+  border-radius: inherit;
+  opacity: 0.3;
+  filter: blur(2px);
+  box-sizing: border-box;
+}
+
+.eb-background-glow {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+  background: radial-gradient(ellipse at center, var(--electric-border-color, #5227FF) 0%, transparent 70%);
+  border-radius: inherit;
+  opacity: 0.1;
+  filter: blur(3px);
+}
+
+.eb-content {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+}
+
+/* Additional styling for input wrapper */
+.electric-border input {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+}
+
+.electric-border input:focus {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.electric-border input:disabled {
+  background: transparent !important;
+}
