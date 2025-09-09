@@ -347,11 +347,11 @@ function App() {
         showConnectionToast={showConnectionToast} 
       />
       
-      <div className="flex flex-col lg:flex-row lg:h-screen lg:gap-6 lg:p-4 lg:pb-6">
+      <div className="flex flex-col lg:flex-row lg:h-screen lg:gap-6 lg:p-4 lg:pb-6 h-screen">
         {/* Video Section */}
-        <div ref={videoSectionRef} className="flex-1 flex flex-col rounded-[5px] overflow-hidden shadow-lg lg:mb-0">
+        <div ref={videoSectionRef} className="lg:flex-1 flex flex-col rounded-[5px] overflow-hidden shadow-lg lg:mb-0">
           {/* Video Player */}
-          <div className="flex-1 bg-black relative overflow-hidden shadow-2xl h-80 lg:h-auto lg:rounded-lg">
+          <div className="relative w-full aspect-[951/535] lg:flex-1 bg-black overflow-hidden shadow-2xl lg:rounded-lg">
             {/* Inner container */}
             <div className="relative w-full h-full bg-black rounded-[5px] lg:rounded-lg overflow-hidden">
               {/* Animated Border */}
@@ -394,7 +394,7 @@ function App() {
               <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-red-500 z-20 animate-pulse delay-1500"></div>
 
 <iframe
-  className="w-full aspect-[951/535] lg:h-full object-cover relative z-0"
+  className="w-full h-full object-cover relative z-0"
   src={`https://www.youtube-nocookie.com/embed/live_stream?channel=UCTUDCKoJ1he9InKbCHwhKsw&autoplay=1&mute=1`}
   title="YouTube video player"
   frameBorder="0"
@@ -410,11 +410,7 @@ function App() {
         {/* Chat Section */}
         <div 
           ref={chatSectionRef}
-          className="w-full lg:w-96 bg-gradient-to-b from-slate-800 to-gray-800 border-t lg:border-t-0 lg:border-l border-gray-600 flex flex-col lg:h-full shadow-2xl rounded-[5px] chat-section"
-          style={{
-            // Mobile gets initial height, desktop overridden by CSS
-            height: 'calc(100dvh - 320px)'
-          }}
+          className="flex-1 lg:w-96 bg-gradient-to-b from-slate-800 to-gray-800 border-t lg:border-t-0 lg:border-l border-gray-600 flex flex-col lg:h-full shadow-2xl rounded-[5px] chat-section min-h-0"
         >
           {!isJoined ? (
             !isAuthenticated ? (
@@ -446,10 +442,12 @@ function App() {
               </div>
               
               <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-                <ChatMessages 
-                  messages={messages}
-                  currentUser={currentUser}
-                />
+                <div className="flex-1 min-h-0">
+                  <ChatMessages 
+                    messages={messages}
+                    currentUser={currentUser}
+                  />
+                </div>
 
                 <div className="flex-shrink-0">
                   <TypingIndicator typingUsers={typingUsers} />

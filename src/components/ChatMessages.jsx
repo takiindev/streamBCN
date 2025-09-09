@@ -7,13 +7,26 @@ const ChatMessages = ({ messages, currentUser }) => {
 
   // Throttled scroll to prevent excessive calls
   const scrollToBottom = useCallback(() => {
-    if (messagesEndRef.current) {
+    if (messagesEndRef.current && containerRef.current) {
       // Use requestAnimationFrame to optimize scroll timing
       requestAnimationFrame(() => {
-        messagesEndRef.current?.scrollIntoView({ 
-          behavior: "smooth",
-          block: "end"
-        });
+        try {
+          // Try scrollIntoView first
+          messagesEndRef.current?.scrollIntoView({ 
+            behavior: "smooth",
+            block: "end"
+          });
+          
+          // Backup method - direct scroll
+          if (containerRef.current) {
+            containerRef.current.scrollTop = containerRef.current.scrollHeight;
+          }
+        } catch (error) {
+          // Fallback if scrollIntoView fails
+          if (containerRef.current) {
+            containerRef.current.scrollTop = containerRef.current.scrollHeight;
+          }
+        }
       });
     }
   }, []);
@@ -31,6 +44,15 @@ const ChatMessages = ({ messages, currentUser }) => {
       return () => clearTimeout(timeoutId);
     }
   }, [messages.length, scrollToBottom]);
+
+  // Ensure scroll to bottom on initial mount
+  useEffect(() => {
+    if (messages.length > 0) {
+      setTimeout(() => {
+        scrollToBottom();
+      }, 300); // Give time for layout to settle
+    }
+  }, []);
 
   // Heavy optimization: Only re-render when messages actually change
   const renderedMessages = useMemo(() => {
@@ -85,11 +107,11 @@ const ChatMessages = ({ messages, currentUser }) => {
     <div 
       ref={containerRef}
       className="
-        flex-1 overflow-y-auto overflow-x-hidden
+        h-full overflow-y-auto overflow-x-hidden
         p-2 md:p-3 lg:p-4 
         space-y-2 lg:space-y-3 
         bg-gradient-to-b from-gray-800 to-slate-800
-        min-h-0 max-h-full
+        min-h-0
         relative
       "
       style={{
@@ -105,13 +127,12 @@ const ChatMessages = ({ messages, currentUser }) => {
         willChange: 'scroll-position',
         // Force consistent rendering
         isolation: 'isolate',
-        // Fix overflow issues
+        // Fix overflow issues - CRITICAL: Don't let it expand beyond parent
         wordBreak: 'break-word',
         overflowWrap: 'break-word',
-        // CRITICAL: Prevent taking 100vh
-        height: 'auto',
+        // PREVENT 100vh expansion - stay within flex container
         maxHeight: '100%',
-        flex: '1 1 0%'
+        minHeight: '0px'
       }}
     >
       {/* Fade gradient when scrolled to top */}

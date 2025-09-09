@@ -26,7 +26,7 @@ const MessageInput = ({
             onKeyPress={handleKeyPress}
             placeholder="Nhập tin nhắn..."
             maxLength={500}
-            className="w-full p-3 rounded-[5px] text-white text-sm transition-all duration-300 disabled:opacity-50 placeholder-gray-400"
+            className="w-full p-3 rounded-[5px] text-white text-sm transition-all duration-300 disabled:opacity-50 placeholder-gray-400 bg-gray-700/80 border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 shadow-lg focus:shadow-xl focus:shadow-blue-500/20 outline-none"
             disabled={!isConnected}
           />
         <button
