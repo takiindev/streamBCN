@@ -53,7 +53,17 @@ function Stream() {
     };
 
     const handleNewMessage = (message) => {
-      setMessages(prev => [...prev, message]);
+      // Batch state updates to prevent multiple re-renders
+      setMessages(prev => {
+        // Prevent duplicate messages
+        const exists = prev.some(msg => 
+          msg.id === message.id || 
+          (msg.timestamp === message.timestamp && msg.message === message.message)
+        );
+        if (exists) return prev;
+        
+        return [...prev, message];
+      });
       setMessageCount(prev => prev + 1);
     };
 

@@ -1,64 +1,82 @@
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useRef, useEffect, useMemo, useCallback } from 'react';
 
 const ChatMessages = ({ messages, currentUser }) => {
   const messagesEndRef = useRef(null);
   const containerRef = useRef(null);
+  const lastMessageCountRef = useRef(0);
 
-  const scrollToBottom = () => {
+  // Throttled scroll to prevent excessive calls
+  const scrollToBottom = useCallback(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ 
-        behavior: "smooth",
-        block: "end"
+      // Use requestAnimationFrame to optimize scroll timing
+      requestAnimationFrame(() => {
+        messagesEndRef.current?.scrollIntoView({ 
+          behavior: "smooth",
+          block: "end"
+        });
       });
     }
-  };
+  }, []);
 
-  // Debounced scroll to prevent layout thrashing on mobile
+  // Only scroll when new messages are added, not on every render
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      scrollToBottom();
-    }, 50);
+    if (messages.length > lastMessageCountRef.current) {
+      lastMessageCountRef.current = messages.length;
+      
+      // Debounce scroll to prevent multiple calls
+      const timeoutId = setTimeout(() => {
+        scrollToBottom();
+      }, 100);
 
-    return () => clearTimeout(timeoutId);
-  }, [messages]);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [messages.length, scrollToBottom]);
 
-  // Memoize messages to prevent unnecessary re-renders
+  // Heavy optimization: Only re-render when messages actually change
   const renderedMessages = useMemo(() => {
-    return messages.map((message, index) => (
-      <div
-        key={message.id || `msg-${index}`}
-        className={`
-          p-3 rounded-lg text-sm transition-all duration-200 backdrop-blur-sm
-          break-words overflow-hidden
-          ${message.isSystem
-            ? 'bg-gradient-to-r from-blue-600/30 to-indigo-600/30 text-blue-200 italic border-l-4 border-blue-400 shadow-lg'
-            : 'bg-gradient-to-r from-gray-700/90 to-slate-700/90 text-gray-100 shadow-md border border-gray-600/50'
-          }
-        `}
-        style={{
-          // Force hardware acceleration for smoother animations
-          transform: 'translateZ(0)',
-          willChange: 'auto'
-        }}
-      >
-        {!message.isSystem && (
-          <div className="text-xs text-gray-400 mb-2 font-medium flex items-center gap-2 flex-wrap">
-            <span className="text-blue-300 truncate max-w-[120px]">{message.username}</span>
-            <span className="opacity-60">•</span>
-            <span className="whitespace-nowrap">
-              {new Date(message.timestamp).toLocaleTimeString('vi-VN', {
-                hour: '2-digit',
-                minute: '2-digit'
-              })}
-            </span>
+    return messages.map((message, index) => {
+      // Use stable keys to prevent unnecessary re-renders
+      const messageKey = message.id || `${message.timestamp}-${index}`;
+      
+      return (
+        <div
+          key={messageKey}
+          className={`
+            p-3 rounded-lg text-sm transition-none
+            break-words overflow-hidden
+            ${message.isSystem
+              ? 'bg-blue-600/30 text-blue-200 italic border-l-4 border-blue-400'
+              : 'bg-gray-700/90 text-gray-100 border border-gray-600/50'
+            }
+          `}
+          style={{
+            // Force consistent rendering
+            backgroundColor: message.isSystem ? 'rgba(37, 99, 235, 0.3)' : 'rgba(55, 65, 81, 0.9)',
+            // Prevent layout shift
+            contain: 'layout style',
+            // Optimize rendering
+            willChange: 'auto'
+          }}
+        >
+          {!message.isSystem && (
+            <div className="text-xs text-gray-400 mb-2 font-medium flex items-center gap-2">
+              <span className="text-blue-300 truncate max-w-[120px]">{message.username}</span>
+              <span className="opacity-60">•</span>
+              <span className="whitespace-nowrap">
+                {new Date(message.timestamp).toLocaleTimeString('vi-VN', {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </span>
+            </div>
+          )}
+          <div className="break-words leading-relaxed whitespace-pre-wrap">
+            {message.message}
           </div>
-        )}
-        <div className="break-words leading-relaxed whitespace-pre-wrap">
-          {message.message}
         </div>
-      </div>
-    ));
-  }, [messages]);
+      );
+    });
+  }, [messages]); // Only depend on messages, not other props
 
   return (
     <div 
@@ -73,18 +91,28 @@ const ChatMessages = ({ messages, currentUser }) => {
         lg:min-h-[400px] lg:max-h-none
       "
       style={{
-        // Ensure consistent background on mobile
-        backgroundColor: '#1e293b',
-        backgroundImage: 'linear-gradient(to bottom, #1e293b, #334155)',
-        // Optimize scrolling performance
+        // Ensure consistent background on mobile - FORCE IT!
+        backgroundColor: '#1e293b !important',
+        backgroundImage: 'linear-gradient(to bottom, #1e293b, #334155) !important',
+        // Critical performance optimizations for mobile
         WebkitOverflowScrolling: 'touch',
         transform: 'translateZ(0)',
-        // Prevent zoom on double-tap
-        touchAction: 'pan-y'
+        // Prevent layout thrashing
+        contain: 'layout style paint',
+        // Prevent repaints during scroll
+        willChange: 'scroll-position',
+        // Force consistent rendering
+        isolation: 'isolate'
       }}
     >
       {messages.length === 0 ? (
-        <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+        <div 
+          className="flex items-center justify-center h-full text-gray-400 text-sm"
+          style={{ 
+            contain: 'layout style',
+            backgroundColor: 'transparent'
+          }}
+        >
           <div className="text-center">
             <div className="text-2xl mb-2">💬</div>
             <p>Chưa có tin nhắn nào</p>
@@ -97,7 +125,10 @@ const ChatMessages = ({ messages, currentUser }) => {
           <div 
             ref={messagesEndRef} 
             className="h-1"
-            style={{ minHeight: '1px' }}
+            style={{ 
+              minHeight: '1px',
+              contain: 'layout size'
+            }}
           />
         </>
       )}
