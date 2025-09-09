@@ -1,6 +1,4 @@
-import React from 'react';
-
-const MessageInput = React.memo(({ 
+const MessageInput = ({ 
   messageInput, 
   onInputChange, 
   onSendMessage, 
@@ -42,6 +40,6 @@ const MessageInput = React.memo(({
       </form>
     </div>
   );
-});
+};
 
 export default MessageInput;

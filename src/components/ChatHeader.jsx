@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ChatHeader = React.memo(({ viewerCount, messageCount, ping }) => {
+const ChatHeader = ({ viewerCount, messageCount, ping }) => {
   return (
     <div className="p-4 bg-gradient-to-r from-red-600 via-blue-600 to-purple-700 text-white shadow-xl relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12"></div>
@@ -26,6 +26,6 @@ const ChatHeader = React.memo(({ viewerCount, messageCount, ping }) => {
       </div>
     </div>
   );
-});
+};
 
 export default ChatHeader;
