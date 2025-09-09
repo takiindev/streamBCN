@@ -287,6 +287,7 @@ function App() {
         showConnectionToast={showConnectionToast} 
       />
       
+      
       <div className="flex flex-col lg:flex-row lg:h-screen lg:gap-6 lg:p-4">
         {/* Video Section */}
         <div className="flex-1 flex flex-col rounded-[5px] overflow-hidden shadow-lg">
