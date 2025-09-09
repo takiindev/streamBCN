@@ -37,28 +37,55 @@ function App() {
   const videoSectionRef = useRef(null);
   const chatSectionRef = useRef(null);
 
-  // Dynamic height calculation
+  // Dynamic height calculation - Only for mobile
   useEffect(() => {
     const updateChatHeight = () => {
+      // Only apply dynamic height calculation on mobile (768px and below)
+      const isMobile = window.innerWidth <= 768;
+      
+      if (!isMobile) {
+        // COMPLETELY disable JS for desktop - let CSS handle everything
+        if (chatSectionRef.current) {
+          chatSectionRef.current.style.height = '';
+          chatSectionRef.current.style.minHeight = '';
+          chatSectionRef.current.style.maxHeight = '';
+        }
+        return;
+      }
+
+      // Mobile: Calculate dynamic height
       if (videoSectionRef.current && chatSectionRef.current) {
         const videoHeight = videoSectionRef.current.offsetHeight;
         const chatHeight = `calc(100dvh - ${videoHeight}px)`;
         chatSectionRef.current.style.height = chatHeight;
+        chatSectionRef.current.style.minHeight = chatHeight;
       }
     };
 
-    // Update on mount and resize
-    updateChatHeight();
-    window.addEventListener('resize', updateChatHeight);
-    
-    // Update when orientation changes (mobile)
-    window.addEventListener('orientationchange', () => {
+    // Small delay to ensure DOM is ready
+    const timeoutId = setTimeout(updateChatHeight, 100);
+
+    // Update on resize
+    const handleResize = () => {
+      clearTimeout(timeoutId);
       setTimeout(updateChatHeight, 100);
-    });
+    };
+
+    window.addEventListener('resize', handleResize);
+    
+    // Update when orientation changes (mobile only)
+    const handleOrientationChange = () => {
+      if (window.innerWidth <= 768) {
+        setTimeout(updateChatHeight, 200);
+      }
+    };
+
+    window.addEventListener('orientationchange', handleOrientationChange);
 
     return () => {
-      window.removeEventListener('resize', updateChatHeight);
-      window.removeEventListener('orientationchange', updateChatHeight);
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleOrientationChange);
     };
   }, []);
 
@@ -320,13 +347,13 @@ function App() {
         showConnectionToast={showConnectionToast} 
       />
       
-      <div className="flex flex-col lg:flex-row lg:h-screen lg:gap-6 lg:p-4">
+      <div className="flex flex-col lg:flex-row lg:h-screen lg:gap-6 lg:p-4 lg:pb-6">
         {/* Video Section */}
-        <div ref={videoSectionRef} className="flex-1 flex flex-col rounded-[5px] overflow-hidden shadow-lg">
+        <div ref={videoSectionRef} className="flex-1 flex flex-col rounded-[5px] overflow-hidden shadow-lg lg:mb-0">
           {/* Video Player */}
-          <div className="flex-1 bg-black relative overflow-hidden shadow-2xl h-80 lg:h-auto">
+          <div className="flex-1 bg-black relative overflow-hidden shadow-2xl h-80 lg:h-auto lg:rounded-lg">
             {/* Inner container */}
-            <div className="relative w-full h-full bg-black rounded-[5px] overflow-hidden">
+            <div className="relative w-full h-full bg-black rounded-[5px] lg:rounded-lg overflow-hidden">
               {/* Animated Border */}
               <div className="absolute inset-0 z-20 pointer-events-none">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 animate-[shimmer_3s_ease-in-out_infinite]"></div>
@@ -366,15 +393,16 @@ function App() {
               <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-pink-500 z-20 animate-pulse delay-1000"></div>
               <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-red-500 z-20 animate-pulse delay-1500"></div>
 
-              <iframe
-                className="w-full aspect-[951/535] lg:h-full object-cover relative z-0" 
-                src="https://www.youtube-nocookie.com/embed/4xDzrJKXOOY?autoplay=1&mute=1" 
-                title="YouTube video player" 
-                frameBorder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                referrerPolicy="strict-origin-when-cross-origin" 
-                allowFullScreen 
-              />
+<iframe
+  className="w-full aspect-[951/535] lg:h-full object-cover relative z-0"
+  src={`https://www.youtube-nocookie.com/embed/live_stream?channel=UCTUDCKoJ1he9InKbCHwhKsw&autoplay=1&mute=1`}
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+/>
+
             </div>
           </div>
         </div>
@@ -382,9 +410,9 @@ function App() {
         {/* Chat Section */}
         <div 
           ref={chatSectionRef}
-          className="w-full lg:w-96 bg-gradient-to-b from-slate-800 to-gray-800 border-t lg:border-t-0 lg:border-l border-gray-600 flex flex-col lg:max-h-none shadow-2xl rounded-[5px]"
+          className="w-full lg:w-96 bg-gradient-to-b from-slate-800 to-gray-800 border-t lg:border-t-0 lg:border-l border-gray-600 flex flex-col lg:h-full shadow-2xl rounded-[5px] chat-section"
           style={{
-            // Initial height for mobile, will be updated by JS
+            // Mobile gets initial height, desktop overridden by CSS
             height: 'calc(100dvh - 320px)'
           }}
         >

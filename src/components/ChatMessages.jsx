@@ -87,6 +87,7 @@ const ChatMessages = ({ messages, currentUser }) => {
         space-y-2 lg:space-y-3 
         bg-gradient-to-b from-gray-800 to-slate-800
         min-h-0
+        relative
       "
       style={{
         // Ensure consistent background on mobile - FORCE IT!
@@ -103,6 +104,9 @@ const ChatMessages = ({ messages, currentUser }) => {
         isolation: 'isolate'
       }}
     >
+      {/* Fade gradient when scrolled to top */}
+      <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-gray-800 via-gray-800/70 to-transparent pointer-events-none z-10 opacity-80"></div>
+      
       {messages.length === 0 ? (
         <div 
           className="flex items-center justify-center h-full text-gray-400 text-sm"

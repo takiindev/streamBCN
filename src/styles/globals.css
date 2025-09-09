@@ -66,6 +66,20 @@
     animation-duration: 1s !important;
     animation-iteration-count: infinite !important;
   }
+  
+  /* Custom shimmer animation for chat header */
+  .animate-shimmer {
+    animation: shimmer 3s ease-in-out infinite !important;
+  }
+  
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%) skewX(-12deg);
+    }
+    100% {
+      transform: translateX(100%) skewX(-12deg);
+    }
+  }
 }
 
 .animate-float {
@@ -76,7 +90,7 @@
   animation: float-reverse 3s ease-in-out infinite;
 }
 
-/* Main container - Mobile optimized 
+/* Main container - Mobile optimized */
 
 /* Mobile-specific optimizations */
 @media (max-width: 768px) {
@@ -94,9 +108,11 @@
   }
   
   .chat-section {
+    /* Mobile chat section - allow JS override */
     flex: 1;
     min-height: 0;
     overflow: hidden;
+    /* Don't override JS height calculation */
   }
   
   /* Prevent zoom on input focus */
@@ -112,12 +128,46 @@
     /* Prevent scrollbar from affecting layout */
     box-sizing: border-box;
   }
-  
-  /* Prevent text selection issues */
-  .chat-message {
-    -webkit-user-select: text;
-    user-select: text;
+}
+
+/* Desktop optimizations - Pure CSS, no JS interference */
+@media (min-width: 769px) {
+  .main-container {
+    /* Desktop container setup */
+    height: 100vh;
+    overflow: hidden;
+    /* Let Tailwind handle padding: lg:p-4 lg:pb-6 */
   }
+  
+  /* Desktop flex container */
+  .lg\\:h-screen {
+    height: calc(100vh - 2.5rem) !important; /* 100% minus main padding (1rem top + 1.5rem bottom) */
+  }
+  
+  .video-section {
+    /* Video takes remaining space */
+    flex: 1;
+  }
+  
+  .chat-section {
+    /* Chat takes exactly calculated height - NO JS interference */
+    height: 100% !important;
+    flex: 0 0 24rem !important; /* Fixed width: 384px (w-96) */
+    min-height: 100% !important;
+    max-height: 100% !important;
+    overflow: hidden;
+  }
+  
+  /* Override any JS height setting on desktop */
+  .chat-section[style*="height"] {
+    height: 100% !important;
+  }
+}
+
+/* Prevent text selection issues */
+.chat-message {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 /* Custom scrollbar for dark theme - Hidden on mobile */
