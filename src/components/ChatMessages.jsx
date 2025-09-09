@@ -107,7 +107,11 @@ const ChatMessages = ({ messages, currentUser }) => {
         isolation: 'isolate',
         // Fix overflow issues
         wordBreak: 'break-word',
-        overflowWrap: 'break-word'
+        overflowWrap: 'break-word',
+        // CRITICAL: Prevent taking 100vh
+        height: 'auto',
+        maxHeight: '100%',
+        flex: '1 1 0%'
       }}
     >
       {/* Fade gradient when scrolled to top */}

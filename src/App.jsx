@@ -437,11 +437,13 @@ function App() {
           ) : (
             /* Chat Interface */
             <>
-              <ChatHeader 
-                viewerCount={viewerCount}
-                messageCount={messageCount}
-                ping={ping}
-              />
+              <div className="flex-shrink-0">
+                <ChatHeader 
+                  viewerCount={viewerCount}
+                  messageCount={messageCount}
+                  ping={ping}
+                />
+              </div>
               
               <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                 <ChatMessages 
@@ -449,15 +451,19 @@ function App() {
                   currentUser={currentUser}
                 />
 
-                <TypingIndicator typingUsers={typingUsers} />
+                <div className="flex-shrink-0">
+                  <TypingIndicator typingUsers={typingUsers} />
+                </div>
               </div>
 
-              <MessageInput 
-                messageInput={messageInput}
-                onInputChange={handleInputChange}
-                onSendMessage={handleSendMessage}
-                isConnected={isConnected}
-              />
+              <div className="flex-shrink-0">
+                <MessageInput 
+                  messageInput={messageInput}
+                  onInputChange={handleInputChange}
+                  onSendMessage={handleSendMessage}
+                  isConnected={isConnected}
+                />
+              </div>
             </>
           )}
         </div>
