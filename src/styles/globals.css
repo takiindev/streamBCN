@@ -76,16 +76,27 @@
   animation: float-reverse 3s ease-in-out infinite;
 }
 
-/* Main container - Mobile optimized */
-.main-container {
-  /* Prevent horizontal scroll on mobile */
-  overflow-x: hidden;
-}
+/* Main container - Mobile optimized 
 
 /* Mobile-specific optimizations */
 @media (max-width: 768px) {
   .main-container {
     padding: 0;
+    /* Ensure container uses dynamic viewport height */
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+  
+  /* Dynamic height containers */
+  .video-section {
+    flex-shrink: 0;
+  }
+  
+  .chat-section {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
   }
   
   /* Prevent zoom on input focus */

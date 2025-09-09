@@ -286,13 +286,13 @@ function Stream() {
         showConnectionToast={showConnectionToast} 
       />
       
-      <div className="flex flex-col lg:flex-row lg:h-screen lg:gap-6 lg:p-4">
+      <div className="flex flex-col h-screen lg:flex-row lg:gap-6 lg:p-4">
         {/* Video Section */}
         <div className="flex-1 flex flex-col bg-black rounded-none lg:rounded-lg overflow-hidden shadow-lg">
           {/* Video Player - Simplified for mobile */}
-          <div className="relative bg-black">
+          <div className="relative bg-black flex-shrink-0">
             <iframe
-              className="w-full h-[200px] sm:h-[250px] md:h-[300px] lg:h-[400px] xl:h-full" 
+              className="w-full h-[35vh] sm:h-[40vh] lg:h-[400px] xl:h-full" 
               src="https://www.youtube-nocookie.com/embed/4xDzrJKXOOY?autoplay=1&mute=1" 
               title="YouTube video player" 
               frameBorder="0" 
@@ -307,7 +307,7 @@ function Stream() {
           </div>
 
           {/* Video Info - Simplified */}
-          <div className="p-3 lg:p-6 bg-slate-800 border-t border-gray-600">
+          <div className="p-3 lg:p-6 bg-slate-800 border-t border-gray-600 flex-shrink-0">
             <h1 className="text-lg lg:text-2xl font-bold text-red-400 mb-2">
               🔴 LiveStream Chat Demo
             </h1>
@@ -317,8 +317,8 @@ function Stream() {
           </div>
         </div>
 
-        {/* Chat Section - Simplified */}
-        <div className="w-full lg:w-96 bg-slate-800 border-t lg:border-t-0 lg:border-l border-gray-600 flex flex-col min-h-[400px] lg:min-h-0">
+        {/* Chat Section - Fixed height on mobile */}
+        <div className="w-full lg:w-96 bg-slate-800 border-t lg:border-t-0 lg:border-l border-gray-600 flex flex-col h-[65vh] lg:h-auto">
           {!isJoined ? (
             !isAuthenticated ? (
               <LoginForm
@@ -346,19 +346,23 @@ function Stream() {
                 ping={ping}
               />
               
-              <ChatMessages 
-                messages={messages}
-                currentUser={currentUser}
-              />
+              <div className="flex-1 flex flex-col min-h-0">
+                <ChatMessages 
+                  messages={messages}
+                  currentUser={currentUser}
+                />
 
-              <TypingIndicator typingUsers={typingUsers} />
+                <TypingIndicator typingUsers={typingUsers} />
+              </div>
 
-              <MessageInput 
-                messageInput={messageInput}
-                onInputChange={handleInputChange}
-                onSendMessage={handleSendMessage}
-                isConnected={isConnected}
-              />
+              <div className="flex-shrink-0">
+                <MessageInput 
+                  messageInput={messageInput}
+                  onInputChange={handleInputChange}
+                  onSendMessage={handleSendMessage}
+                  isConnected={isConnected}
+                />
+              </div>
             </>
           )}
         </div>

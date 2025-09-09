@@ -86,9 +86,7 @@ const ChatMessages = ({ messages, currentUser }) => {
         p-2 md:p-3 lg:p-4 
         space-y-2 lg:space-y-3 
         bg-gradient-to-b from-gray-800 to-slate-800
-        min-h-[250px] max-h-[60vh] 
-        md:min-h-[300px] md:max-h-[70vh]
-        lg:min-h-[400px] lg:max-h-none
+        min-h-0
       "
       style={{
         // Ensure consistent background on mobile - FORCE IT!

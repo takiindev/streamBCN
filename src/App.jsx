@@ -31,9 +31,36 @@ function App() {
   // Socket connection
   const { socket, isConnected, connectionStatus, showConnectionToast, disconnectSocket } = useSocket(isAuthenticated, authenticatedUser);
 
-  // Refs
+  // Refs for dynamic height calculation
   const typingTimer = useRef(null);
   const currentUserRef = useRef(null);
+  const videoSectionRef = useRef(null);
+  const chatSectionRef = useRef(null);
+
+  // Dynamic height calculation
+  useEffect(() => {
+    const updateChatHeight = () => {
+      if (videoSectionRef.current && chatSectionRef.current) {
+        const videoHeight = videoSectionRef.current.offsetHeight;
+        const chatHeight = `calc(100dvh - ${videoHeight}px)`;
+        chatSectionRef.current.style.height = chatHeight;
+      }
+    };
+
+    // Update on mount and resize
+    updateChatHeight();
+    window.addEventListener('resize', updateChatHeight);
+    
+    // Update when orientation changes (mobile)
+    window.addEventListener('orientationchange', () => {
+      setTimeout(updateChatHeight, 100);
+    });
+
+    return () => {
+      window.removeEventListener('resize', updateChatHeight);
+      window.removeEventListener('orientationchange', updateChatHeight);
+    };
+  }, []);
 
   // Check authentication on page load
   useEffect(() => {
@@ -295,7 +322,7 @@ function App() {
       
       <div className="flex flex-col lg:flex-row lg:h-screen lg:gap-6 lg:p-4">
         {/* Video Section */}
-        <div className="flex-1 flex flex-col rounded-[5px] overflow-hidden shadow-lg">
+        <div ref={videoSectionRef} className="flex-1 flex flex-col rounded-[5px] overflow-hidden shadow-lg">
           {/* Video Player */}
           <div className="flex-1 bg-black relative overflow-hidden shadow-2xl h-80 lg:h-auto">
             {/* Inner container */}
@@ -353,7 +380,14 @@ function App() {
         </div>
 
         {/* Chat Section */}
-        <div className="w-full lg:w-96 bg-gradient-to-b from-slate-800 to-gray-800 border-t lg:border-t-0 lg:border-l border-gray-600 flex flex-col lg:max-h-none shadow-2xl rounded-[5px] overflow-hidden">
+        <div 
+          ref={chatSectionRef}
+          className="w-full lg:w-96 bg-gradient-to-b from-slate-800 to-gray-800 border-t lg:border-t-0 lg:border-l border-gray-600 flex flex-col lg:max-h-none shadow-2xl rounded-[5px]"
+          style={{
+            // Initial height for mobile, will be updated by JS
+            height: 'calc(100dvh - 320px)'
+          }}
+        >
           {!isJoined ? (
             !isAuthenticated ? (
               <LoginForm
