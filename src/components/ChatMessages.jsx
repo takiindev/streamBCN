@@ -43,7 +43,7 @@ const ChatMessages = ({ messages, currentUser }) => {
           key={messageKey}
           className={`
             p-3 rounded-lg text-sm transition-none
-            break-words overflow-hidden
+            break-words overflow-hidden w-full max-w-full
             ${message.isSystem
               ? 'bg-blue-600/30 text-blue-200 italic border-l-4 border-blue-400'
               : 'bg-gray-700/90 text-gray-100 border border-gray-600/50'
@@ -52,17 +52,20 @@ const ChatMessages = ({ messages, currentUser }) => {
           style={{
             // Force consistent rendering
             backgroundColor: message.isSystem ? 'rgba(37, 99, 235, 0.3)' : 'rgba(55, 65, 81, 0.9)',
-            // Prevent layout shift
+            // Prevent layout shift and overflow
             contain: 'layout style',
-            // Optimize rendering
-            willChange: 'auto'
+            willChange: 'auto',
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
+            maxWidth: '100%',
+            boxSizing: 'border-box'
           }}
         >
           {!message.isSystem && (
-            <div className="text-xs text-gray-400 mb-2 font-medium flex items-center gap-2">
-              <span className="text-blue-300 truncate max-w-[120px]">{message.username}</span>
-              <span className="opacity-60">•</span>
-              <span className="whitespace-nowrap">
+            <div className="text-xs text-gray-400 mb-2 font-medium flex items-center gap-2 overflow-hidden">
+              <span className="text-blue-300 truncate max-w-[120px] flex-shrink-0">{message.username}</span>
+              <span className="opacity-60 flex-shrink-0">•</span>
+              <span className="whitespace-nowrap flex-shrink-0">
                 {new Date(message.timestamp).toLocaleTimeString('vi-VN', {
                   hour: '2-digit',
                   minute: '2-digit'
@@ -70,7 +73,7 @@ const ChatMessages = ({ messages, currentUser }) => {
               </span>
             </div>
           )}
-          <div className="break-words leading-relaxed whitespace-pre-wrap">
+          <div className="break-words leading-relaxed whitespace-pre-wrap overflow-hidden max-w-full" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
             {message.message}
           </div>
         </div>
@@ -82,11 +85,11 @@ const ChatMessages = ({ messages, currentUser }) => {
     <div 
       ref={containerRef}
       className="
-        flex-1 overflow-y-auto
+        flex-1 overflow-y-auto overflow-x-hidden
         p-2 md:p-3 lg:p-4 
         space-y-2 lg:space-y-3 
         bg-gradient-to-b from-gray-800 to-slate-800
-        min-h-0
+        min-h-0 max-h-full
         relative
       "
       style={{
@@ -101,7 +104,10 @@ const ChatMessages = ({ messages, currentUser }) => {
         // Prevent repaints during scroll
         willChange: 'scroll-position',
         // Force consistent rendering
-        isolation: 'isolate'
+        isolation: 'isolate',
+        // Fix overflow issues
+        wordBreak: 'break-word',
+        overflowWrap: 'break-word'
       }}
     >
       {/* Fade gradient when scrolled to top */}
