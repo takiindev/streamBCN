@@ -270,7 +270,7 @@ function Stream() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 text-white font-['Inter',sans-serif] main-container">
+    <div className="bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 text-white font-['Inter',sans-serif] main-container">
       <ConnectionToast 
         connectionStatus={connectionStatus} 
         showConnectionToast={showConnectionToast} 
@@ -278,42 +278,37 @@ function Stream() {
       
       <div className="flex flex-col lg:flex-row lg:h-screen lg:gap-6 lg:p-4">
         {/* Video Section */}
-        <div className="flex-1 flex flex-col rounded-[5px] overflow-hidden shadow-lg relative">
-          {/* Animated Border */}
-          <div className="absolute inset-0 rounded-[5px] bg-gradient-to-r from-red-500 via-purple-500 via-blue-500 to-red-500 bg-[length:400%_400%] animate-gradient-x p-[2px] z-0">
-            <div className="w-full h-full bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 rounded-[3px]"></div>
-          </div>
-          
-          {/* Video Player */}
-          <div className="flex-1 bg-black relative overflow-hidden shadow-2xl h-80 lg:h-auto rounded-[5px] z-10">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/10 z-10 pointer-events-none"></div>
+        <div className="flex-1 flex flex-col bg-black rounded-none lg:rounded-lg overflow-hidden shadow-lg">
+          {/* Video Player - Simplified for mobile */}
+          <div className="relative bg-black">
             <iframe
-              className="w-full aspect-[951/535] lg:h-full object-cover" 
+              className="w-full h-[200px] sm:h-[250px] md:h-[300px] lg:h-[400px] xl:h-full" 
               src="https://www.youtube-nocookie.com/embed/4xDzrJKXOOY?autoplay=1&mute=1" 
               title="YouTube video player" 
               frameBorder="0" 
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
               referrerPolicy="strict-origin-when-cross-origin" 
-              allowFullScreen 
+              allowFullScreen
+              style={{
+                minHeight: '200px',
+                backgroundColor: '#000'
+              }}
             />
           </div>
 
-          {/* Video Info */}
-          <div className="p-4 lg:p-6 bg-gradient-to-r from-slate-800 via-gray-800 to-slate-700 border-t border-gray-600 shadow-xl relative overflow-hidden rounded-b-[5px] z-10">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-            <div className="relative max-w-4xl mx-auto">
-              <h1 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-red-400 via-pink-500 to-rose-400 bg-clip-text text-transparent mb-3 tracking-wide">
-                🔴 LiveStream Chat Demo
-              </h1>
-              <p className="text-sm lg:text-base text-gray-300 leading-relaxed font-medium">
-                Trải nghiệm chat realtime với WebSocket và messaging tức thời
-              </p>
-            </div>
+          {/* Video Info - Simplified */}
+          <div className="p-3 lg:p-6 bg-slate-800 border-t border-gray-600">
+            <h1 className="text-lg lg:text-2xl font-bold text-red-400 mb-2">
+              🔴 LiveStream Chat Demo
+            </h1>
+            <p className="text-sm lg:text-base text-gray-300">
+              Trải nghiệm chat realtime với WebSocket và messaging tức thời
+            </p>
           </div>
         </div>
 
-        {/* Chat Section */}
-        <div className="w-full lg:w-96 bg-gradient-to-b from-slate-800 to-gray-800 border-t lg:border-t-0 lg:border-l border-gray-600 flex flex-col lg:max-h-none shadow-2xl rounded-[5px] overflow-hidden">
+        {/* Chat Section - Simplified */}
+        <div className="w-full lg:w-96 bg-slate-800 border-t lg:border-t-0 lg:border-l border-gray-600 flex flex-col min-h-[400px] lg:min-h-0">
           {!isJoined ? (
             !isAuthenticated ? (
               <LoginForm

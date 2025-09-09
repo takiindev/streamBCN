@@ -71,7 +71,6 @@ const ChatMessages = ({ messages, currentUser }) => {
         min-h-[250px] max-h-[60vh] 
         md:min-h-[300px] md:max-h-[70vh]
         lg:min-h-[400px] lg:max-h-none
-        scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800
       "
       style={{
         // Ensure consistent background on mobile

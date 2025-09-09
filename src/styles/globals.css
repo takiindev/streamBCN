@@ -42,9 +42,30 @@
   50% { transform: translateY(10px) rotate(-180deg); }
 }
 
-/* Custom animation classes */
+/* Custom animation classes - Optimized for mobile */
 .animate-gradient-x {
   animation: gradient-x 4s ease infinite;
+}
+
+/* Disable heavy animations on mobile for performance */
+@media (max-width: 768px) {
+  .animate-gradient-x {
+    animation: none;
+  }
+  
+  /* Reduce motion for mobile users */
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  /* Keep essential animations only */
+  .animate-pulse,
+  .animate-spin {
+    animation-duration: 1s !important;
+    animation-iteration-count: infinite !important;
+  }
 }
 
 .animate-float {
@@ -55,27 +76,71 @@
   animation: float-reverse 3s ease-in-out infinite;
 }
 
-/* Main container padding
+/* Main container - Mobile optimized */
 .main-container {
-  padding: 10px;
-} */
-
-/* Custom scrollbar for dark theme */
-::-webkit-scrollbar {
-  width: 6px;
+  /* Prevent horizontal scroll on mobile */
+  overflow-x: hidden;
 }
 
-::-webkit-scrollbar-track {
-  background: #374151;
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  .main-container {
+    padding: 0;
+  }
+  
+  /* Prevent zoom on input focus */
+  input, textarea, select {
+    font-size: 16px !important;
+    transform: translateZ(0);
+  }
+  
+  /* Optimize touch scrolling */
+  * {
+    -webkit-overflow-scrolling: touch;
+    touch-action: manipulation;
+    /* Prevent scrollbar from affecting layout */
+    box-sizing: border-box;
+  }
+  
+  /* Prevent text selection issues */
+  .chat-message {
+    -webkit-user-select: text;
+    user-select: text;
+  }
 }
 
-::-webkit-scrollbar-thumb {
-  background: #6b7280;
-  border-radius: 3px;
+/* Custom scrollbar for dark theme - Hidden on mobile */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #374151;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #6b7280;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+/* Hide scrollbar on mobile to prevent layout issues */
+@media (max-width: 767px) {
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  *::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
 }
 
 /* Video Frame Animations */
