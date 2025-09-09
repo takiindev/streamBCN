@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useSocket } from './hooks/useSocket';
 import { authService } from './services/authService';
 import { chatService } from './services/chatService';
@@ -53,24 +53,24 @@ function App() {
       setMessageCount(existingMessages.length);
     };
 
-    const handleNewMessage = (message) => {
+    const handleNewMessage = useCallback((message) => {
       // Removed console.log
       setMessages(prev => [...prev, message]);
       setMessageCount(prev => prev + 1);
-    };
+    }, []);
 
-    const handleUserJoined = (data) => {
+    const handleUserJoined = useCallback((data) => {
       // Removed console.log
       addSystemMessage(`${data.username} đã tham gia phòng`);
       setViewerCount(data.viewerCount);
       setIsJoined(true);
-    };
+    }, []);
 
-    const handleUserLeft = (data) => {
+    const handleUserLeft = useCallback((data) => {
       // Removed console.log
       addSystemMessage(`${data.username} đã rời phòng`);
       setViewerCount(data.viewerCount);
-    };
+    }, []);
 
     const handleTyping = (data) => {
       // Removed console.log
@@ -211,7 +211,14 @@ function App() {
     chatService.joinRoom(socket, joinData);
   };
 
-  const handleSendMessage = () => {
+  // Memoize addSystemMessage to prevent re-renders
+  const addSystemMessage = useCallback((text) => {
+    const systemMessage = chatService.createSystemMessage(text);
+    setMessages(prev => [...prev, systemMessage]);
+  }, []);
+
+  // Memoize handlers to prevent re-renders
+  const handleSendMessage = useCallback(() => {
     if (!messageInput.trim()) return;
 
     if (!socket || !isConnected) {
@@ -241,41 +248,37 @@ function App() {
         isTyping: false 
       });
     }
-  };
+  }, [messageInput, socket, isConnected, currentUser, currentRoom]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = useCallback((e) => {
     setMessageInput(e.target.value);
     
-    // Start typing indicator
-    if (socket && currentRoom && currentUser && isJoined) {
+    // Handle typing indicator
+    if (!currentUser || !socket) return;
+    
+    // Clear existing timer
+    if (typingTimer.current) {
+      clearTimeout(typingTimer.current);
+    }
+    
+    // Send typing start
+    chatService.sendTyping(socket, { 
+      roomId: currentRoom, 
+      userId: currentUser.userId,
+      username: currentUser.username,
+      isTyping: true 
+    });
+    
+    // Set timer to stop typing
+    typingTimer.current = setTimeout(() => {
       chatService.sendTyping(socket, { 
         roomId: currentRoom, 
         userId: currentUser.userId,
         username: currentUser.username,
-        isTyping: true 
+        isTyping: false 
       });
-
-      // Clear existing typing timer
-      clearTimeout(typingTimer.current);
-      
-      // Set timer to stop typing after 2 seconds
-      typingTimer.current = setTimeout(() => {
-        if (socket && currentRoom && currentUser) {
-          chatService.sendTyping(socket, { 
-            roomId: currentRoom, 
-            userId: currentUser.userId,
-            username: currentUser.username,
-            isTyping: false 
-          });
-        }
-      }, 2000);
-    }
-  };
-
-  const addSystemMessage = (text) => {
-    const systemMessage = chatService.createSystemMessage(text);
-    setMessages(prev => [...prev, systemMessage]);
-  };
+    }, 1000);
+  }, [currentUser, socket, currentRoom]);
 
   return (
     <div className="bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 text-white font-['Inter',sans-serif] main-container">

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useMemo } from 'react';
 
-const ChatMessages = ({ messages, currentUser }) => {
+const ChatMessages = React.memo(({ messages, currentUser }) => {
   const messagesEndRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -103,6 +103,6 @@ const ChatMessages = ({ messages, currentUser }) => {
       )}
     </div>
   );
-};
+});
 
 export default ChatMessages;
