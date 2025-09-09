@@ -2,8 +2,6 @@ export const chatService = {
   // Join room
   joinRoom(socket, roomData) {
     if (!socket) return false;
-    
-    console.log('Emitting joinRoom with data:', roomData);
     socket.emit('joinRoom', roomData);
     return true;
   },
@@ -12,7 +10,6 @@ export const chatService = {
   sendMessage(socket, message) {
     if (!socket) return false;
     
-    console.log('Sending message:', message);
     socket.emit('sendMessage', {
       message: message.trim(),
       type: 'text'

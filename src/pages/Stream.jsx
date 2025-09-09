@@ -45,7 +45,6 @@ function Stream() {
     if (!socket) return;
 
     const handleJoinedRoom = (data) => {
-      console.log('Joined room successfully:', data);
       setIsJoined(true);
       const existingMessages = data.messages || [];
       setMessages(existingMessages);
@@ -54,26 +53,22 @@ function Stream() {
     };
 
     const handleNewMessage = (message) => {
-      console.log('New message:', message);
       setMessages(prev => [...prev, message]);
       setMessageCount(prev => prev + 1);
     };
 
     const handleUserJoined = (data) => {
-      console.log('User joined:', data);
       addSystemMessage(`${data.username} đã tham gia phòng`);
       setViewerCount(data.viewerCount);
       setIsJoined(true);
     };
 
     const handleUserLeft = (data) => {
-      console.log('User left:', data);
       addSystemMessage(`${data.username} đã rời phòng`);
       setViewerCount(data.viewerCount);
     };
 
     const handleTyping = (data) => {
-      console.log('Typing event received:', data);
       const otherTyping = currentUserRef.current && data.userId !== currentUserRef.current.userId;
       
       if (data.isTyping && otherTyping) {
@@ -122,10 +117,8 @@ function Stream() {
       if (user) {
         setAuthenticatedUser(user);
         setIsAuthenticated(true);
-        console.log('✅ Already authenticated, will connect socket automatically');
       }
     } catch (error) {
-      console.log('Not authenticated:', error);
     }
   };
 
@@ -144,7 +137,6 @@ function Stream() {
       const user = await authService.login(studentIdInput, birthDateInput);
       setAuthenticatedUser(user);
       setIsAuthenticated(true);
-      console.log('✅ Authentication successful, will connect socket automatically');
     } catch (error) {
       alert('Lỗi xác thực: ' + error.message);
     }

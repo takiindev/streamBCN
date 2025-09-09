@@ -15,7 +15,7 @@ export const useSocket = (isAuthenticated, authenticatedUser) => {
 
   const connectSocket = () => {
     try {
-      console.log('Connecting to socket...');
+      
       setConnectionStatus('connecting');
       setShowConnectionToast(true);
       
@@ -32,13 +32,13 @@ export const useSocket = (isAuthenticated, authenticatedUser) => {
       // Add token to query if available
       if (token) {
         socketOptions.query = { token };
-        console.log('🔑 Using token for socket authentication');
+        
       }
       
       const newSocket = io(WS_URL, socketOptions);
 
       newSocket.on('connect', () => {
-        console.log('Socket connected!');
+        
         setIsConnected(true);
         setConnectionStatus('connected');
         startPingTest(newSocket);
@@ -59,7 +59,7 @@ export const useSocket = (isAuthenticated, authenticatedUser) => {
       });
 
       newSocket.on('disconnect', () => {
-        console.log('Socket disconnected');
+        
         setIsConnected(false);
         setConnectionStatus('disconnected');
         setShowConnectionToast(true);
@@ -112,7 +112,7 @@ export const useSocket = (isAuthenticated, authenticatedUser) => {
     setShowConnectionToast(true);
     
     reconnectTimer.current = setTimeout(() => {
-      console.log('Attempting to reconnect...');
+      
       if (socket) {
         socket.disconnect();
       }
