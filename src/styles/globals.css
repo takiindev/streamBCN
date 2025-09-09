@@ -100,19 +100,33 @@
     height: 100dvh;
     max-height: 100dvh;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
   
-  /* Dynamic height containers */
+  /* Video section mobile */
   .video-section {
     flex-shrink: 0;
+    height: auto;
   }
   
+  /* Chat section mobile - simpler approach */
   .chat-section {
-    /* Mobile chat section - allow JS override */
     flex: 1;
     min-height: 0;
+    max-height: none;
     overflow: hidden;
-    /* Don't override JS height calculation */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Override any conflicting desktop styles */
+  .lg\\:h-screen {
+    height: auto !important;
+  }
+  
+  .lg\\:h-full {
+    height: auto !important;
   }
   
   /* Prevent zoom on input focus */

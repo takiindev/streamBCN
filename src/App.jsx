@@ -40,11 +40,10 @@ function App() {
   // Dynamic height calculation - Only for mobile
   useEffect(() => {
     const updateChatHeight = () => {
-      // Only apply dynamic height calculation on mobile (768px and below)
       const isMobile = window.innerWidth <= 768;
       
       if (!isMobile) {
-        // COMPLETELY disable JS for desktop - let CSS handle everything
+        // Desktop: Clear all JS styles, let CSS handle
         if (chatSectionRef.current) {
           chatSectionRef.current.style.height = '';
           chatSectionRef.current.style.minHeight = '';
@@ -53,39 +52,24 @@ function App() {
         return;
       }
 
-      // Mobile: Calculate dynamic height
+      // Mobile: Simple height calculation
       if (videoSectionRef.current && chatSectionRef.current) {
         const videoHeight = videoSectionRef.current.offsetHeight;
         const chatHeight = `calc(100dvh - ${videoHeight}px)`;
         chatSectionRef.current.style.height = chatHeight;
-        chatSectionRef.current.style.minHeight = chatHeight;
       }
     };
 
-    // Small delay to ensure DOM is ready
-    const timeoutId = setTimeout(updateChatHeight, 100);
-
-    // Update on resize
-    const handleResize = () => {
-      clearTimeout(timeoutId);
-      setTimeout(updateChatHeight, 100);
-    };
-
-    window.addEventListener('resize', handleResize);
+    // Initial update
+    updateChatHeight();
     
-    // Update when orientation changes (mobile only)
-    const handleOrientationChange = () => {
-      if (window.innerWidth <= 768) {
-        setTimeout(updateChatHeight, 200);
-      }
-    };
-
-    window.addEventListener('orientationchange', handleOrientationChange);
+    // Listen for resize
+    window.addEventListener('resize', updateChatHeight);
+    window.addEventListener('orientationchange', updateChatHeight);
 
     return () => {
-      clearTimeout(timeoutId);
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('orientationchange', handleOrientationChange);
+      window.removeEventListener('resize', updateChatHeight);
+      window.removeEventListener('orientationchange', updateChatHeight);
     };
   }, []);
 
@@ -411,10 +395,6 @@ function App() {
         <div 
           ref={chatSectionRef}
           className="w-full lg:w-96 bg-gradient-to-b from-slate-800 to-gray-800 border-t lg:border-t-0 lg:border-l border-gray-600 flex flex-col lg:h-full shadow-2xl rounded-[5px] chat-section"
-          style={{
-            // Mobile gets initial height, desktop overridden by CSS
-            height: 'calc(100dvh - 320px)'
-          }}
         >
           {!isJoined ? (
             !isAuthenticated ? (
