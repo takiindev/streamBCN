@@ -1,6 +1,3 @@
-import React from 'react';
-import ElectricBorder from './ElectricBorder';
-
 const MessageInput = ({ 
   messageInput, 
   onInputChange, 
@@ -22,14 +19,6 @@ const MessageInput = ({
   return (
     <div className="p-3 lg:p-4 border-t border-gray-600 bg-gradient-to-r from-slate-800 to-gray-800 shadow-inner">
       <form onSubmit={handleSubmit} className="flex gap-2 lg:gap-3">
-        <ElectricBorder
-          color={isConnected ? "#3b82f6" : "#6b7280"}
-          speed={isConnected ? 1.5 : 0.5}
-          chaos={isConnected ? 1 : 0.3}
-          thickness={2}
-          className="flex-1"
-          style={{ borderRadius: '5px' }}
-        >
           <input
             type="text"
             value={messageInput}
@@ -40,7 +29,6 @@ const MessageInput = ({
             className="w-full p-3 rounded-[5px] text-white text-sm transition-all duration-300 disabled:opacity-50 placeholder-gray-400"
             disabled={!isConnected}
           />
-        </ElectricBorder>
         <button
           type="submit"
           disabled={!isConnected || !messageInput.trim()}
