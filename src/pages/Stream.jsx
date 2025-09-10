@@ -180,22 +180,18 @@ function Stream() {
     };
   }, [socket]);
 
-  const checkAuthenticationStatus = async () => {
-    try {
-      const user = await authService.verify();
-      if (user) {
-        setAuthenticatedUser(user);
-        setIsAuthenticated(true);
-        // Removed console.log
-      }
-    } catch (error) {
-      // Removed console.log
-    }
-  };
+  // AuthContext handles authentication verification automatically
+  // No need for manual checkAuthenticationStatus
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    // Prevent default form submission if event is provided
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+
+    // Basic validation
     if (!studentIdInput || !birthDateInput) {
-      alert('Vui lòng nhập Student ID và Ngày sinh (DDMMYY)');
+      alert('Vui lòng nhập đầy đủ Student ID và ngày sinh');
       return;
     }
 
@@ -205,9 +201,7 @@ function Stream() {
     }
 
     try {
-      const user = await authService.login(studentIdInput, birthDateInput);
-      setAuthenticatedUser(user);
-      setIsAuthenticated(true);
+      await login(studentIdInput, birthDateInput);
       // Removed console.log
     } catch (error) {
       alert('Lỗi xác thực: ' + error.message);
@@ -215,11 +209,9 @@ function Stream() {
   };
 
   const handleLogout = async () => {
-    await authService.logout();
+    logout();
     
     // Reset all state
-    setAuthenticatedUser(null);
-    setIsAuthenticated(false);
     setCurrentUser(null);
     setIsJoined(false);
     setMessages([]);
