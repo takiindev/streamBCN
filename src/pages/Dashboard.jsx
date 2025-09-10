@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import API_CONFIG from '../config/api';
 
-const API_BASE = '/admin';
+const API_BASE = API_CONFIG.ADMIN_URL;
 const pageSize = 7;
 
 const sectionTitles = {
@@ -93,18 +94,40 @@ function Dashboard() {
       return null;
     }
     
+    // Debug logging
+    console.log('API Request:', url);
+    console.log('Environment:', import.meta.env.PROD ? 'production' : 'development');
+    console.log('API_BASE:', API_BASE);
+    
     const headers = {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
       ...(options.headers || {}),
     };
-    const res = await fetch(url, { ...options, headers });
-    if (res.status === 403) {
-      showAlert('Phiên đăng nhập hết hạn', 'warning');
-      handleLogout();
+    
+    try {
+      const res = await fetch(url, { ...options, headers });
+      
+      console.log('API Response status:', res.status);
+      
+      if (res.status === 403) {
+        showAlert('Phiên đăng nhập hết hạn', 'warning');
+        handleLogout();
+        return null;
+      }
+      
+      if (!res.ok) {
+        console.error('API Error:', res.status, res.statusText);
+        const errorText = await res.text();
+        console.error('Error details:', errorText);
+      }
+      
+      return res;
+    } catch (error) {
+      console.error('Network error:', error);
+      showAlert('Lỗi kết nối mạng', 'danger');
       return null;
     }
-    return res;
   }
 
   function showSection(section) {

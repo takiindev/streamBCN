@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
+import API_CONFIG from '../config/api';
 
-const WS_URL = 'wss://stream.bancongnghe.tech';
+const WS_URL = API_CONFIG.WS_URL;
 
 export const useSocket = (isAuthenticated, authenticatedUser) => {
   const [socket, setSocket] = useState(null);

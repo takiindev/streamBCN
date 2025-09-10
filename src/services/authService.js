@@ -1,6 +1,7 @@
 import axios from 'axios';
+import API_CONFIG from '../config/api';
 
-const API_URL = 'https://stream.bancongnghe.tech';
+const API_URL = API_CONFIG.BASE_URL;
 
 export const authService = {
   // Login with student ID and birth date
