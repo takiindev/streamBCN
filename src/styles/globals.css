@@ -152,7 +152,6 @@
   .chat-section {
     /* Chat takes exactly calculated height - NO JS interference */
     height: 100% !important;
-    flex: 0 0 24rem !important; /* Fixed width: 384px (w-96) */
     min-height: 100% !important;
     max-height: 100% !important;
     overflow: hidden;

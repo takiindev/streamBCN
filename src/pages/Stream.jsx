@@ -19,7 +19,7 @@ function Stream() {
   const [birthDateInput, setBirthDateInput] = useState('');
 
   // Room and chat states
-  const [currentRoom, setCurrentRoom] = useState('test-room-001');
+  const [currentRoom, setCurrentRoom] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
   const [isJoined, setIsJoined] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -212,14 +212,14 @@ function Stream() {
     logout();
     
     // Reset all state
-    setCurrentUser(null);
-    setIsJoined(false);
-    setMessages([]);
-    setMessageCount(0);
-    setViewerCount(0);
-    setStudentIdInput('');
-    setBirthDateInput('');
-    setCurrentRoom('test-room-001');
+  setCurrentUser(null);
+  setIsJoined(false);
+  setMessages([]);
+  setMessageCount(0);
+  setViewerCount(0);
+  setStudentIdInput('');
+  setBirthDateInput('');
+  setCurrentRoom('');
     
     // Disconnect socket
     disconnectSocket();
@@ -340,11 +340,35 @@ function Stream() {
         showConnectionToast={showConnectionToast} 
       />
       
-      <div className="flex flex-col lg:flex-row lg:h-screen lg:gap-6 lg:p-4 lg:pb-6 h-dvh">
-        {/* Video Section */}
-        <div ref={videoSectionRef} className="lg:flex-1 flex flex-col rounded-[5px] overflow-hidden shadow-lg lg:mb-0">
-          {/* Video Player */}
-          <div className="relative w-full aspect-[951/535] lg:flex-1 bg-black overflow-hidden shadow-2xl lg:rounded-lg">
+      {!isJoined ? (
+        <div className="flex items-center justify-center min-h-screen w-full p-4">
+          <div className="w-full max-w-md">
+            {!isAuthenticated ? (
+              <LoginForm
+                studentIdInput={studentIdInput}
+                setStudentIdInput={setStudentIdInput}
+                birthDateInput={birthDateInput}
+                setBirthDateInput={setBirthDateInput}
+                onLogin={handleLogin}
+              />
+            ) : (
+              <RoomJoinForm
+                currentRoom={currentRoom}
+                setCurrentRoom={setCurrentRoom}
+                authenticatedUser={authenticatedUser}
+                onJoinRoom={handleJoinRoom}
+                onLogout={handleLogout}
+              />
+            )}
+          </div>
+        </div>
+      ) : (
+        /* Main App - Video + Chat */
+  <div className="flex flex-col lg:flex-row lg:h-screen lg:gap-6 lg:p-4 lg:pb-6 h-dvh">
+          {/* Video Section */}
+          <div ref={videoSectionRef} className="lg:flex-1 flex flex-col rounded-[5px] overflow-hidden shadow-lg lg:mb-0">
+            {/* Video Player */}
+            <div className="relative w-full aspect-[951/535] lg:flex-1 bg-black overflow-hidden shadow-2xl lg:rounded-lg">
             {/* Inner container */}
             <div className="relative w-full h-full bg-black rounded-[5px] lg:rounded-lg overflow-hidden">
               {/* Animated Border */}
@@ -398,67 +422,45 @@ function Stream() {
 
             </div>
           </div>
-        </div>
+          </div>
 
-        {/* Chat Section */}
-        <div 
-          ref={chatSectionRef}
-          className="flex-1 lg:w-96 bg-gradient-to-b from-slate-800 to-gray-800 border-t lg:border-t-0 lg:border-l border-gray-600 flex flex-col lg:h-full shadow-2xl rounded-[5px] chat-section min-h-0"
-        >
-          {!isJoined ? (
-            !isAuthenticated ? (
-              <LoginForm
-                studentIdInput={studentIdInput}
-                setStudentIdInput={setStudentIdInput}
-                birthDateInput={birthDateInput}
-                setBirthDateInput={setBirthDateInput}
-                onLogin={handleLogin}
+          {/* Chat Section */}
+          <div 
+            ref={chatSectionRef}
+            className="lg:w-[400px] bg-gradient-to-b from-slate-800 to-gray-800 border-t lg:border-t-0 lg:border-l border-gray-600 flex flex-col lg:h-full shadow-2xl rounded-[5px] chat-section min-h-0"
+          >
+            <div className="flex-shrink-0">
+              <ChatHeader 
+                viewerCount={viewerCount}
+                messageCount={messageCount}
+                ping={ping}
               />
-            ) : (
-              <RoomJoinForm
-                currentRoom={currentRoom}
-                setCurrentRoom={setCurrentRoom}
-                authenticatedUser={authenticatedUser}
-                onJoinRoom={handleJoinRoom}
-                onLogout={handleLogout}
-              />
-            )
-          ) : (
-            /* Chat Interface */
-            <>
-              <div className="flex-shrink-0">
-                <ChatHeader 
-                  viewerCount={viewerCount}
-                  messageCount={messageCount}
-                  ping={ping}
+            </div>
+            
+            <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="flex-1 min-h-0">
+                <ChatMessages 
+                  messages={messages}
+                  currentUser={currentUser}
                 />
-              </div>
-              
-              <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-                <div className="flex-1 min-h-0">
-                  <ChatMessages 
-                    messages={messages}
-                    currentUser={currentUser}
-                  />
-                </div>
-
-                <div className="flex-shrink-0">
-                  <TypingIndicator typingUsers={typingUsers} />
-                </div>
               </div>
 
               <div className="flex-shrink-0">
-                <MessageInput 
-                  messageInput={messageInput}
-                  onInputChange={handleInputChange}
-                  onSendMessage={handleSendMessage}
-                  isConnected={isConnected}
-                />
+                <TypingIndicator typingUsers={typingUsers} />
               </div>
-            </>
-          )}
+            </div>
+
+            <div className="flex-shrink-0">
+              <MessageInput 
+                messageInput={messageInput}
+                onInputChange={handleInputChange}
+                onSendMessage={handleSendMessage}
+                isConnected={isConnected}
+              />
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -6,7 +6,7 @@ const API_CONFIG = {
   BASE_URL: 'https://stream.bancongnghe.tech',
   AUTH_URL: isDevelopment ? '/auth' : 'https://stream.bancongnghe.tech/auth', 
   ADMIN_URL: isDevelopment ? '/admin' : 'https://stream.bancongnghe.tech/admin',
-  WS_URL: isProduction ? 'wss://stream.bancongnghe.tech' : 'ws://localhost:3000',
+  WS_URL: 'wss://stream.bancongnghe.tech', // Always use production server
 };
 
 // Debug logging
