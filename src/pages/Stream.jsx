@@ -492,7 +492,7 @@ function Stream() {
 
 <iframe
   className="w-full h-full object-cover relative z-0"
-  src={`https://www.youtube-nocookie.com/embed/live_stream?channel=UCTUDCKoJ1he9InKbCHwhKsw&autoplay=1&mute=1`}
+  src={`https://www.youtube-nocookie.com/embed/live_stream?channel=UCKRJcLUZuU-1Hg6qXu_oW8g&autoplay=1&mute=1`}
   title="YouTube video player"
   frameBorder="0"
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
