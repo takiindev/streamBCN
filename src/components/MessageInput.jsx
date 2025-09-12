@@ -1,3 +1,4 @@
+import { IoMdSend } from "react-icons/io";
 const MessageInput = ({ 
   messageInput, 
   onInputChange, 
@@ -32,9 +33,9 @@ const MessageInput = ({
         <button
           type="submit"
           disabled={!isConnected || !messageInput.trim()}
-          className="px-4 py-3 bg-gradient-to-r from-red-600 via-blue-600 to-purple-600 text-white rounded-[5px] disabled:from-gray-600 disabled:to-gray-700 text-sm hover:from-red-700 hover:via-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 disabled:transform-none disabled:cursor-not-allowed shadow-lg hover:shadow-xl relative overflow-hidden group"
+          className={"px-4 py-3  text-white rounded-[5px] bg-[#027db7] disabled:bg-gray-700/80 disabled:to-gray-700 text-sm hover:from-red-700 hover:via-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 disabled:transform-none disabled:cursor-not-allowed shadow-lg hover:shadow-xl relative overflow-hidden group"}
         >
-          <span className="relative z-10">📤</span>
+          <span className="relative z-10"><IoMdSend className="w-[20px] h-[20px]" /></span>
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
         </button>
       </form>

@@ -9,11 +9,5 @@ const API_CONFIG = {
   WS_URL: 'wss://stream.bancongnghe.tech', // Always use production server
 };
 
-// Debug logging
-console.log('API Configuration:', {
-  isDevelopment,
-  isProduction,
-  config: API_CONFIG
-});
 
 export default API_CONFIG;

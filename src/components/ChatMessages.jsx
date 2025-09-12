@@ -148,7 +148,6 @@ const ChatMessages = ({ messages, currentUser }) => {
           }}
         >
           <div className="text-center">
-            <div className="text-2xl mb-2">💬</div>
             <p>Chưa có tin nhắn nào</p>
             <p className="text-xs mt-1">Hãy bắt đầu cuộc trò chuyện!</p>
           </div>

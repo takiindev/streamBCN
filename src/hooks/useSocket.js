@@ -4,7 +4,7 @@ import API_CONFIG from '../config/api';
 
 const WS_URL = API_CONFIG.WS_URL;
 
-export const useSocket = (isAuthenticated, authenticatedUser) => {
+export const useSocket = (isAuthenticated, authenticatedUser, setToastContent , setToastStatus) => {
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState('idle');
@@ -80,7 +80,9 @@ export const useSocket = (isAuthenticated, authenticatedUser) => {
           setConnectionStatus('disconnected');
           setShowConnectionToast(true);
           // Show authentication error
-          alert('🔐 Lỗi xác thực - Vui lòng đăng nhập lại');
+          // alert('🔐 Lỗi xác thực - Vui lòng đăng nhập lại');
+          setToastStatus('warn');
+          setToastContent("Lỗi xác thực - Vui lòng đăng nhập lại");
         } else {
           setIsConnected(false);
           setConnectionStatus('disconnected');
@@ -93,7 +95,9 @@ export const useSocket = (isAuthenticated, authenticatedUser) => {
       newSocket.on('error', (error) => {
         console.error('Socket error:', error);
         console.error('Error details:', JSON.stringify(error, null, 2));
-        alert('Lỗi Socket: ' + (error.message || 'Unknown error'));
+        // alert('Lỗi Socket: ' + (error.message || 'Unknown error'));
+        setToastStatus('warn');
+        setToastContent('Lỗi Socket: ' + (error.message || 'Unknown error'));
       });
 
       setSocket(newSocket);

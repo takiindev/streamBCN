@@ -23,13 +23,12 @@ const RoomJoinForm = ({
     <div className="p-4 lg:p-6 space-y-4 lg:space-y-6 bg-gradient-to-br from-slate-800 via-gray-800 to-slate-700 relative overflow-hidden rounded-[5px]">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
       <div className="relative text-center mb-6">
-        <h3 className="text-lg lg:text-xl font-bold text-white mb-3 tracking-wide">💬 Tham gia phòng chat</h3>
-        <div className="w-16 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 mx-auto rounded-full shadow-lg"></div>
+        <h3 className="text-lg lg:text-xl font-bold text-white mb-3 tracking-wide pb-[3px]">Tham gia phòng chat</h3>
       </div>
 
       <form onSubmit={handleSubmit} className="relative space-y-4">
         <div>
-          <label className="block text-sm font-semibold mb-2 text-gray-200 tracking-wide">🏠 Room ID:</label>
+          <label className="block text-sm font-semibold mb-2 text-gray-200 tracking-wide">Room ID:</label>
           <input
             type="text"
             value={currentRoom}
@@ -46,7 +45,7 @@ const RoomJoinForm = ({
             type="submit"
             className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 px-4 py-3 rounded-[5px] text-white font-semibold text-sm transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
           >
-            🚀 Tham gia phòng chat
+            Tham gia phòng chat
           </button>
         </div>
 
@@ -56,7 +55,7 @@ const RoomJoinForm = ({
             onClick={onLogout}
             className="w-full bg-gradient-to-r from-red-600 via-rose-600 to-red-700 px-4 py-3 rounded-[5px] text-white font-semibold text-sm transition-all duration-300 transform hover:scale-105 hover:shadow-xl mt-2"
           >
-            🚪 Đăng xuất
+            Đăng xuất
           </button>
         </div>
 

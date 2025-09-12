@@ -2,14 +2,14 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../hooks/useSocket';
 import { chatService } from '../services/chatService';
-import ConnectionToast from '../components/ConnectionToast';
+// ConnectionToast removed
 import LoginForm from '../components/LoginForm';
 import RoomJoinForm from '../components/RoomJoinForm';
 import ChatHeader from '../components/ChatHeader';
 import ChatMessages from '../components/ChatMessages';
 import TypingIndicator from '../components/TypingIndicator';
 import MessageInput from '../components/MessageInput';
-
+import Toast from '../components/Toast';
 function Stream() {
   // Get auth from context
   const { isAuthenticated, user: authenticatedUser, login, logout } = useAuth();
@@ -29,8 +29,75 @@ function Stream() {
   const [ping, setPing] = useState('-');
   const [typingUsers, setTypingUsers] = useState('');
 
+  const [toastContent, setToastContent] = useState('');
+  const [toastStatus, setToastStatus] = useState('notification'); // 'notification', 'warn', 'error'
+  const toastTimerRef = useRef();
+  // Only handle cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current);
+        toastTimerRef.current = null;
+      }
+    };
+  }, []);
+
   // Socket connection
-  const { socket, isConnected, connectionStatus, showConnectionToast, disconnectSocket } = useSocket(isAuthenticated, authenticatedUser);
+  const { socket, isConnected, disconnectSocket } = useSocket(isAuthenticated, authenticatedUser ,setToastContent , setToastStatus);
+
+  // Track connecting state
+  const [isConnecting, setIsConnecting] = useState(false);
+
+  // Listen for socket connecting/disconnecting
+  useEffect(() => {
+    if (isAuthenticated && !isConnected && socket) {
+      setIsConnecting(true);
+    } else {
+      setIsConnecting(false);
+    }
+  }, [isAuthenticated, isConnected, socket]);
+
+  // Show Toast for socket connection status
+  useEffect(() => {
+    if (isConnecting) {
+      setToastStatus('warn');
+      setToastContent('Đang kết nối tới server...');
+      // Show repeatedly every 1s while connecting
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current);
+        toastTimerRef.current = null;
+      }
+      toastTimerRef.current = setInterval(() => {
+        setToastStatus('warn');
+        setToastContent('Đang kết nối tới server...');
+      }, 1000);
+    } else {
+      // Clear interval if not connecting
+      if (toastTimerRef.current) {
+        clearInterval(toastTimerRef.current);
+        toastTimerRef.current = null;
+      }
+      if (isConnected) {
+        setToastStatus('notification');
+        setToastContent('Đã kết nối tới server!');
+        // Hide after 2s
+        toastTimerRef.current = setTimeout(() => {
+          setToastStatus('notification');
+          setToastContent('');
+          toastTimerRef.current = null;
+        }, 2000);
+      } else if (isAuthenticated) {
+        setToastStatus('warn');
+        setToastContent('Mất kết nối tới server!');
+        // Hide after 2s
+        toastTimerRef.current = setTimeout(() => {
+          setToastStatus('warn');
+          setToastContent('');
+          toastTimerRef.current = null;
+        }, 2000);
+      }
+    }
+  }, [isConnecting, isConnected, isAuthenticated]);
 
   // Refs for dynamic height calculation
   const typingTimer = useRef(null);
@@ -154,7 +221,9 @@ function Stream() {
 
     const handleJoinRoomError = (error) => {
       console.error('Join room error:', error);
-      alert('Lỗi tham gia phòng: ' + (error.message || error));
+      // alert('Lỗi tham gia phòng: ' + (error.message || error));
+      setToastStatus('warn');
+      setToastContent('Lỗi tham gia phòng: ' + (error.message || error));
     };
 
     // Add event listeners
@@ -191,12 +260,16 @@ function Stream() {
 
     // Basic validation
     if (!studentIdInput || !birthDateInput) {
-      alert('Vui lòng nhập đầy đủ Student ID và ngày sinh');
+      setToastStatus('warn');
+      setToastContent('Vui lòng nhập đầy đủ Student ID và ngày sinh');
+      // alert('Vui lòng nhập đầy đủ Student ID và ngày sinh');
       return;
     }
 
     if (birthDateInput.length !== 6) {
-      alert('Ngày sinh phải ở định dạng DDMMYY (6 ký tự)');
+      // alert('Ngày sinh phải ở định dạng DDMMYY (6 ký tự)');
+      setToastStatus('warn');
+      setToastContent('Ngày sinh phải ở định dạng DDMMYY (6 ký tự)');
       return;
     }
 
@@ -204,7 +277,9 @@ function Stream() {
       await login(studentIdInput, birthDateInput);
       // Removed console.log
     } catch (error) {
-      alert('Lỗi xác thực: ' + error.message);
+      // alert('Lỗi xác thực: ' + error.message);
+      setToastStatus('error');
+      setToastContent('Lỗi xác thực: ' + (error.message || error));
     }
   };
 
@@ -227,22 +302,30 @@ function Stream() {
 
   const handleJoinRoom = async () => {
     if (!currentRoom) {
-      alert('Vui lòng nhập Room ID!');
+      // alert('Vui lòng nhập Room ID!');
+      setToastStatus('warn');
+      setToastContent('Vui lòng nhập Room ID!');
       return;
     }
 
     if (!isAuthenticated || !authenticatedUser) {
-      alert('Vui lòng đăng nhập trước khi tham gia phòng');
+      // alert('Vui lòng đăng nhập trước khi tham gia phòng');
+      setToastStatus('warn');
+      setToastContent('Vui lòng đăng nhập trước khi tham gia phòng');
       return;
     }
 
     if (!socket) {
-      alert('Chưa kết nối tới server. Vui lòng đăng nhập lại!');
+      // alert('Chưa kết nối tới server. Vui lòng đăng nhập lại!');
+      setToastStatus('error');
+      setToastContent('Chưa kết nối tới server. Vui lòng đăng nhập lại!');
       return;
     }
 
     if (!isConnected) {
-      alert('Chưa kết nối tới server. Vui lòng thử lại!');
+      // alert('Chưa kết nối tới server. Vui lòng thử lại!');
+      setToastStatus('error');
+      setToastContent('Chưa kết nối tới server. Vui lòng thử lại!');
       return;
     }
 
@@ -335,10 +418,7 @@ function Stream() {
 
   return (
     <div className="bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 text-white font-['Inter',sans-serif] main-container">
-      <ConnectionToast 
-        connectionStatus={connectionStatus} 
-        showConnectionToast={showConnectionToast} 
-      />
+  <Toast content={toastContent} status={toastStatus} showToast={!!toastContent} />
       
       {!isJoined ? (
         <div className="flex items-center justify-center min-h-screen w-full p-4">
