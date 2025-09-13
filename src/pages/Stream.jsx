@@ -418,8 +418,12 @@ function Stream() {
 
   return (
     <div className="bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 text-white font-['Inter',sans-serif] main-container">
-  <Toast content={toastContent} status={toastStatus} showToast={!!toastContent} />
-      
+      <Toast
+        content={toastContent}
+        status={toastStatus}
+        showToast={!!toastContent}
+      />
+
       {!isJoined ? (
         <div className="flex items-center justify-center min-h-screen w-full p-4">
           <div className="w-full max-w-md">
@@ -444,85 +448,108 @@ function Stream() {
         </div>
       ) : (
         /* Main App - Video + Chat */
-  <div className="flex flex-col lg:flex-row lg:h-screen lg:gap-6 lg:p-4 lg:pb-6 h-dvh">
+        <div className="flex flex-col lg:flex-row lg:h-screen lg:gap-6 lg:p-4 lg:pb-6 h-dvh">
           {/* Video Section */}
-          <div ref={videoSectionRef} className="lg:flex-1 flex flex-col rounded-[5px] overflow-hidden shadow-lg lg:mb-0">
+          <div
+            ref={videoSectionRef}
+            className="lg:flex-1 flex flex-col rounded-[5px] overflow-hidden shadow-lg lg:mb-0"
+          >
             {/* Video Player */}
             <div className="relative w-full aspect-[951/535] lg:flex-1 bg-black overflow-hidden shadow-2xl lg:rounded-lg">
-            {/* Inner container */}
-            <div className="relative w-full h-full bg-black rounded-[5px] lg:rounded-lg overflow-hidden">
-              {/* Animated Border */}
-              <div className="absolute inset-0 z-20 pointer-events-none">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 animate-[shimmer_3s_ease-in-out_infinite]"></div>
-                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-pink-500 to-blue-500 animate-[shimmer_3s_ease-in-out_infinite_reverse]"></div>
-                <div className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-blue-500 via-purple-500 to-red-500 animate-[shimmer-vertical_3s_ease-in-out_infinite]"></div>
-                <div className="absolute top-0 right-0 h-full w-1 bg-gradient-to-b from-red-500 via-pink-500 to-blue-500 animate-[shimmer-vertical_3s_ease-in-out_infinite_reverse]"></div>
+              {/* Inner container */}
+              <div className="relative w-full h-full bg-black rounded-[5px] lg:rounded-lg overflow-hidden">
+                {/* Animated Border */}
+                <div className="absolute inset-0 z-20 pointer-events-none">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 animate-[shimmer_3s_ease-in-out_infinite]"></div>
+                  <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-pink-500 to-blue-500 animate-[shimmer_3s_ease-in-out_infinite_reverse]"></div>
+                  <div className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-blue-500 via-purple-500 to-red-500 animate-[shimmer-vertical_3s_ease-in-out_infinite]"></div>
+                  <div className="absolute top-0 right-0 h-full w-1 bg-gradient-to-b from-red-500 via-pink-500 to-blue-500 animate-[shimmer-vertical_3s_ease-in-out_infinite_reverse]"></div>
+                </div>
+
+                {/* Floating Icons */}
+                <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
+                  {/* Top Left Icons */}
+                  <div className="absolute top-4 left-4 text-2xl animate-bounce">
+                    🎥
+                  </div>
+                  <div className="absolute top-8 left-16 text-lg animate-pulse text-blue-400">
+                    ✨
+                  </div>
+
+                  {/* Top Right Icons */}
+                  <div className="absolute top-4 right-4 text-2xl animate-bounce delay-1000">
+                    🔴
+                  </div>
+                  <div className="absolute top-8 right-16 text-lg animate-pulse text-red-400 delay-500">
+                    ⭐
+                  </div>
+
+                  {/* Bottom Left Icons */}
+                  <div className="absolute bottom-4 left-4 text-xl animate-pulse text-purple-400">
+                    🎬
+                  </div>
+                  <div className="absolute bottom-8 left-16 text-lg animate-bounce delay-700">
+                    💫
+                  </div>
+
+                  {/* Bottom Right Icons */}
+                  <div className="absolute bottom-4 right-4 text-xl animate-pulse text-pink-400 delay-300">
+                    🎭
+                  </div>
+                  <div className="absolute bottom-8 right-16 text-lg animate-bounce delay-1500">
+                    🌟
+                  </div>
+
+                  {/* Center floating icons */}
+                  <div className="absolute top-1/4 left-1/4 text-sm animate-float text-yellow-400 opacity-60">
+                    💎
+                  </div>
+                  <div className="absolute top-3/4 right-1/4 text-sm animate-float-reverse text-cyan-400 opacity-60 delay-1000">
+                    🎪
+                  </div>
+                  <div className="absolute top-1/2 left-1/6 text-sm animate-float text-green-400 opacity-60 delay-500">
+                    🎨
+                  </div>
+                  <div className="absolute top-1/3 right-1/6 text-sm animate-float-reverse text-orange-400 opacity-60 delay-1500">
+                    🎊
+                  </div>
+                </div>
+
+                {/* Corner Decorations */}
+                <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-blue-500 z-20 animate-pulse"></div>
+                <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-purple-500 z-20 animate-pulse delay-500"></div>
+                <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-pink-500 z-20 animate-pulse delay-1000"></div>
+                <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-red-500 z-20 animate-pulse delay-1500"></div>
+
+                <iframe
+                  className="w-full h-full object-cover relative z-0"
+                  src={import.meta.env.VITE_STREAM_URL || `https://www.youtube-nocookie.com/embed/live_stream?channel=UCKRJcLUZuU-1Hg6qXu_oW8g&autoplay=1&mute=1`}
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
               </div>
-
-              {/* Floating Icons */}
-              <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
-                {/* Top Left Icons */}
-                <div className="absolute top-4 left-4 text-2xl animate-bounce">🎥</div>
-                <div className="absolute top-8 left-16 text-lg animate-pulse text-blue-400">✨</div>
-                
-                {/* Top Right Icons */}
-                <div className="absolute top-4 right-4 text-2xl animate-bounce delay-1000">🔴</div>
-                <div className="absolute top-8 right-16 text-lg animate-pulse text-red-400 delay-500">⭐</div>
-                
-                {/* Bottom Left Icons */}
-                <div className="absolute bottom-4 left-4 text-xl animate-pulse text-purple-400">🎬</div>
-                <div className="absolute bottom-8 left-16 text-lg animate-bounce delay-700">💫</div>
-                
-                {/* Bottom Right Icons */}
-                <div className="absolute bottom-4 right-4 text-xl animate-pulse text-pink-400 delay-300">🎭</div>
-                <div className="absolute bottom-8 right-16 text-lg animate-bounce delay-1500">🌟</div>
-                
-                {/* Center floating icons */}
-                <div className="absolute top-1/4 left-1/4 text-sm animate-float text-yellow-400 opacity-60">💎</div>
-                <div className="absolute top-3/4 right-1/4 text-sm animate-float-reverse text-cyan-400 opacity-60 delay-1000">🎪</div>
-                <div className="absolute top-1/2 left-1/6 text-sm animate-float text-green-400 opacity-60 delay-500">🎨</div>
-                <div className="absolute top-1/3 right-1/6 text-sm animate-float-reverse text-orange-400 opacity-60 delay-1500">🎊</div>
-              </div>
-              
-              {/* Corner Decorations */}
-              <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-blue-500 z-20 animate-pulse"></div>
-              <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-purple-500 z-20 animate-pulse delay-500"></div>
-              <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-pink-500 z-20 animate-pulse delay-1000"></div>
-              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-red-500 z-20 animate-pulse delay-1500"></div>
-
-<iframe
-  className="w-full h-full object-cover relative z-0"
-  src={`https://www.youtube-nocookie.com/embed/live_stream?channel=UCKRJcLUZuU-1Hg6qXu_oW8g&autoplay=1&mute=1`}
-  title="YouTube video player"
-  frameBorder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  referrerPolicy="strict-origin-when-cross-origin"
-  allowFullScreen
-/>
-
             </div>
-          </div>
           </div>
 
           {/* Chat Section */}
-          <div 
+          <div
             ref={chatSectionRef}
             className="lg:w-[400px] bg-gradient-to-b from-slate-800 to-gray-800 border-t lg:border-t-0 lg:border-l border-gray-600 flex flex-col lg:h-full shadow-2xl rounded-[5px] chat-section min-h-0"
           >
             <div className="flex-shrink-0">
-              <ChatHeader 
+              <ChatHeader
                 viewerCount={viewerCount}
                 messageCount={messageCount}
                 ping={ping}
               />
             </div>
-            
+
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <div className="flex-1 min-h-0">
-                <ChatMessages 
-                  messages={messages}
-                  currentUser={currentUser}
-                />
+                <ChatMessages messages={messages} currentUser={currentUser} />
               </div>
 
               <div className="flex-shrink-0">
@@ -531,7 +558,7 @@ function Stream() {
             </div>
 
             <div className="flex-shrink-0">
-              <MessageInput 
+              <MessageInput
                 messageInput={messageInput}
                 onInputChange={handleInputChange}
                 onSendMessage={handleSendMessage}
